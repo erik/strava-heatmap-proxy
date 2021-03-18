@@ -55,12 +55,26 @@ const authResp = await fetch("https://heatmap-external-a.strava.com/auth", {
 });
 
 if (authResp.status !== 200) {
-    throw new Error('Authentication failed.')
+  throw new Error("Authentication failed.");
 }
 
-const cookies = getCookies(authResp).concat(sessionCookies);
-const [_, stravaId] = cookies.find((c) => c.startsWith("strava_remember_id="))!
+const requiredCookieNames = new Set([
+  "CloudFront-Policy",
+  "CloudFront-Key-Pair-Id",
+  "CloudFront-Signature",
+  "_strava4_session",
+]);
+
+const allCookies = getCookies(authResp).concat(sessionCookies);
+const [_, stravaId] = allCookies.find((c) =>
+  c.startsWith("strava_remember_id=")
+)!
   .split("=", 2);
 
+// We're limited to 1kB for CloudflareWorker Secrets, so be selective in the cookies we use
+const requiredCookies = allCookies.filter((it) =>
+  requiredCookieNames.has(it.split("=")[0])
+);
+
 console.log(`STRAVA_ID=${stravaId}`);
-console.log(`STRAVA_COOKIES=${cookies.join(";")}`);
+console.log(`STRAVA_COOKIES=${requiredCookies.join(";")}`);
