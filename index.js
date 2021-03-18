@@ -3,10 +3,7 @@ const Router = require("./router");
 // The Cloudflare worker runtime populates these globals.
 const Env = {
   STRAVA_ID,
-  STRAVA_SESSION,
-  CF_ID,
-  CF_SIG,
-  CF_POLICY,
+  STRAVA_COOKIES,
 };
 
 addEventListener("fetch", (event) => {
@@ -90,15 +87,9 @@ async function handleTileProxyRequest(request) {
   // replace templated data in base URL
   const proxyUrl = baseUrl.replace(/\{(\w+)\}/g, (_, key) => data[key]);
 
-  const cookies =
-    `_strava4_session=${Env.STRAVA_SESSION}` +
-    `; CloudFront-Key-Pair-Id=${Env.CF_ID}` +
-    `; CloudFront-Policy=${Env.CF_POLICY}` +
-    `; CloudFront-Signature=${Env.CF_SIG}`;
-
   const proxiedRequest = new Request(proxyUrl, {
     method: "GET",
-    headers: new Headers({ Cookie: cookies }),
+    headers: new Headers({ Cookie: Env.STRAVA_COOKIES }),
   });
 
   return await fetch(proxiedRequest);
