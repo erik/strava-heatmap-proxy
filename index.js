@@ -4,6 +4,7 @@ const Router = require("./router");
 const Env = {
   STRAVA_ID,
   STRAVA_COOKIES,
+  TILE_CACHE_SECS: +TILE_CACHE_SECS || 0
 };
 
 addEventListener("fetch", (event) => {
@@ -21,11 +22,11 @@ async function handleRequest(event) {
 
       response = await r.route(event.request);
 
-      // TODO: Make this configurable, probably don't want to cache
-      // _everything_
-      response = new Response(response.body, response);
-      response.headers.append("Cache-Control", "s-maxage=60");
-      event.waitUntil(caches.default.put(event.request.url, response.clone()));
+      if (Env.TILE_CACHE_SECS > 0 && response.status === 200) {
+        response = new Response(response.body, response);
+        response.headers.append("Cache-Control", `s-maxage=${Env.TILE_CACHE_SECS}`);
+        event.waitUntil(caches.default.put(event.request.url, response.clone()));
+      }
     }
 
     return response;
