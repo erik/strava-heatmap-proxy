@@ -1,0 +1,25 @@
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  refesh-creds:
+    runs-on: ubuntu-latest
+    name: Refresh Strava Credentials
+    steps:
+      - uses: actions/checkout@v2
+      - uses: denolib/setup-deno@v2
+        with:
+          deno-version: v1.x
+      - name: Refresh Strava credentials
+        env:
+          STRAVA_EMAIL: ${{ secrets.STRAVA_EMAIL }}
+          STRAVA_PASSWORD: ${{ secrets.STRAVA_PASSWORD }}
+        run: ./scripts/refresh-strava-credentials.ts >> $GITHUB_ENV
+      - name: Write Strava creds to Cloudflare
+        uses: cloudflare/wrangler-action@1.2.0
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          secrets: |
+            STRAVA_ID
+            STRAVA_COOKIES
