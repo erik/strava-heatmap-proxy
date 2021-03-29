@@ -1,4 +1,4 @@
-#!/usr/bin/env deno run --allow-net --allow-env
+#!/usr/bin/env -S deno run --allow-net --allow-env
 //
 // Log a user into Strava and write the cookies to stdout for later use.
 
