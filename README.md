@@ -47,3 +47,6 @@ Here's an example tile URL with some data:
 
 When you're all set, use `wrangler publish` to bring the site live on
 `strava-heatmap-proxy.YOUR-NAMESPACE.workers.dev`
+
+Heads up, your credentials will expire after a few weeks, considering creating
+a periodic task to refresh them every 7 days or so.
