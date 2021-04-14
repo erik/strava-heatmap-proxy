@@ -78,11 +78,5 @@ const requiredCookies = allCookies.filter((it) =>
 
 const stravaCookies = requiredCookies.join(";");
 
-if (Deno.env.get("GITHUB_ACTION") === "true") {
-  // Mask secrets so they don't appear anywhere in the GitHub actions logs
-  console.log(`::add-mask::${stravaId}`);
-  console.log(`::add-mask::${stravaCookies}`);
-}
-
-console.log(`STRAVA_ID=${stravaId}`);
-console.log(`STRAVA_COOKIES=${stravaCookies}`);
+console.log(`STRAVA_ID='${stravaId}'`);
+console.log(`STRAVA_COOKIES='${stravaCookies}'`);
