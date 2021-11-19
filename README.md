@@ -72,8 +72,10 @@ STRAVA_COOKIES=...
 ```
 
 Now that we have these values, let's store them as Worker secrets.
+Remember to first modify `wrangler.toml` to update your `account_id`.
 
 ``` console
+$ wrangler login
 $ echo "1234" | wrangler secret put STRAVA_ID
 $ echo "...." | wrangler secret put STRAVA_COOKIES
 ```

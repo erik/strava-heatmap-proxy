@@ -8,8 +8,14 @@ workers_dev = true
 route = ""
 zone_id = ""
 
+compatibility_date = "2021-11-19"
+
 # Controls how long Cloudflare should cache each tile before requesting again
 # from Strava.
 #
 # Use "0" to disable caching.
 vars = { TILE_CACHE_SECS = "86400" }
+
+# [secrets]
+# STRAVA_ID
+# STRAVA_COOKIES
