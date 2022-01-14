@@ -64,7 +64,7 @@ const PERSONAL_MAP_URL =
 
 const GLOBAL_MAP_URL =
   "https://heatmap-external-c.strava.com/" +
-  "tiles-auth/ride/{color}/{z}/{x}/{y}{res}.png?v=19";
+  "tiles-auth/all/{color}/{z}/{x}/{y}{res}.png?v=19";
 
 // Proxy requests from /kind/color/z/x/y(?@2x).png to baseUrl
 async function handleTileProxyRequest(request) {
