@@ -43,50 +43,57 @@ async function handleRequest(event) {
 function handleIndexRequest() {
   return new Response(`\
 Global Heatmap
-  /global/:color/{z}/{x}/{y}.png
-  /global/:color/{z}/{x}/{y}@2x.png
-
+  for 512px tiles (default) : /global/:color/:activity/{z}/{x}/{y}.png
+  for 256px tiles : /global/:color/:activity/{z}/{x}/{y}&px=256.png
+  for 1024px tiles : /global/:color/:activity/{z}/{x}/{y}@2x.png
+  
   color choices: mobileblue, orange, hot, blue, bluered, purple, gray
-
+  activity choices : all, ride, winter, run, water
+  
 Personal Heatmap
-  /personal/:color/{z}/{x}/{y}.png
-  /personal/:color/{z}/{x}/{y}@2x.png
+  for 512px tiles (default) : /personal/:color/:activity/{z}/{x}/{y}.png
+  for 256px tiles : /personal/:color/:activity/{z}/{x}/{y}&px=256.png
+  for 1024px tiles : /personal/:color/:activity/{z}/{x}/{y}@2x.png
 
   color choices: orange, hot, blue, bluered, purple, gray
+  activity choices : all, ride, winter, run, water
 `);
 }
 
 const PERSONAL_MAP_URL =
   "https://personal-heatmaps-external.strava.com/" +
   "tiles/{strava_id}/{color}/{z}/{x}/{y}{res}.png" +
-  "?filter_type=ride&include_everyone=true" +
-  "&include_followers_only=true&respect_privacy_zones=true";
+  "?filter_type={activity}&include_everyone=true" +
+  "&include_followers_only=true&respect_privacy_zones=true{res256}";
 
 const GLOBAL_MAP_URL =
   "https://heatmap-external-c.strava.com/" +
-  "tiles-auth/ride/{color}/{z}/{x}/{y}{res}.png?v=19";
+      "tiles-auth/{activity}/{color}/{z}/{x}/{y}{res}.png?v=19{res256}";
+  // "tiles-auth/{activity}/{color}/{z}/{x}/{y}{res}.png?v=19";
 
-// Proxy requests from /kind/color/z/x/y(?@2x).png to baseUrl
+// Proxy requests from /kind/color/activity/z/x/y(?@2x).png to baseUrl
 async function handleTileProxyRequest(request) {
   const url = new URL(request.url);
-
+  
   const match = url.pathname.match(
-    new RegExp("(personal|global)/(\\w+)/(\\d+)/(\\d+)/(\\d+)(@2x)?.png")
+    new RegExp("(personal|global)/(\\w+)/(\\w+)/(\\d+)/(\\d+)/(\\d+)(@2x)?(&px=256)?.png")
   );
   if (match === null) {
-    return new Response("invalid url, expected: /kind/color/z/x/y.png", {
+    return new Response("invalid url, expected: /kind/color/activity/z/x/y.png", {
       status: 400,
     });
   }
 
-  const [_, kind, color, z, x, y, res] = match;
+  const [_, kind, color, activity, z, x, y, res, res256] = match;
   const data = {
     strava_id: Env.STRAVA_ID,
     color,
+    activity,
     x,
     y,
     z,
     res: res || "",
+    res256: res256 || "",
   };
 
   const baseUrl = kind === "personal" ? PERSONAL_MAP_URL : GLOBAL_MAP_URL;

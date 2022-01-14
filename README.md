@@ -5,7 +5,7 @@ unauthenticated access to personal and global Strava heatmaps. If you want to
 use your personal Strava heatmap in Gaia or Locus, this will give you a URL
 that you can use for that.
 
-Note: you **will** need to be a Strava premium subscriber to use this. Personal
+Note: you **will** need to be a Strava premium subscriber to use personal heatmap, while global heatmap are available for free Strava account. Personal
 use only, please. Strava will ratelimit you.
 
 # Setup
@@ -16,11 +16,11 @@ Worker.
 If you want to use these heatmaps as a tile layer in another app, here are the
 template URLs to use:
 
-- Personal: `https://strava-heatmap-proxy.YOUR_NAMESPACE.workers.dev/personal/orange/{zoom}/{x}/{y}@2x.png`
-- Global: `https://strava-heatmap-proxy.YOUR_NAMESPACE.workers.dev/global/orange/{zoom}/{x}/{y}@2x.png`
+- Personal: `https://strava-heatmap-proxy.YOUR_NAMESPACE.workers.dev/personal/orange/all/{zoom}/{x}/{y}@2x.png`
+- Global: `https://strava-heatmap-proxy.YOUR_NAMESPACE.workers.dev/global/orange/all/{zoom}/{x}/{y}@2x.png`
 
 Check `https://strava-heatmap-proxy.YOUR_NAMESPACE.workers.dev/` for full list
-of supported tile colors.
+of supported tile colors, activities and tile size.
 
 ## The easy way
 
@@ -28,7 +28,7 @@ Start by forking the repository and modifying `wrangler.toml` to reference your
 Cloudflare account. The Deploy to Cloudflare Workers button below will do this
 for you:
 
-[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/erik/strava-heatmap-proxy)
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/jpicheral/strava-heatmap-proxy)
 
 In your forked repository, we need to set up some GitHub secrets
 (`github.com/you/strava-heatmap-proxy/settings/secrets/actions`).
