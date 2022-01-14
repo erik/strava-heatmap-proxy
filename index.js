@@ -43,11 +43,12 @@ async function handleRequest(event) {
 function handleIndexRequest() {
   return new Response(`\
 Global Heatmap
-  /global/:color/{z}/{x}/{y}.png
-  /global/:color/{z}/{x}/{y}@2x.png
+  /global/:color/:activity/{z}/{x}/{y}.png
+  /global/:color/:activity/{z}/{x}/{y}@2x.png
 
   color choices: mobileblue, orange, hot, blue, bluered, purple, gray
-
+  activity choices : all, ride, winter, run, water
+  
 Personal Heatmap
   /personal/:color/{z}/{x}/{y}.png
   /personal/:color/{z}/{x}/{y}@2x.png
@@ -64,18 +65,14 @@ const PERSONAL_MAP_URL =
 
 const GLOBAL_MAP_URL =
   "https://heatmap-external-c.strava.com/" +
-  "tiles-auth/all/{color}/{z}/{x}/{y}{res}.png?v=19";
+  "tiles-auth/{color}/{activity}/{z}/{x}/{y}{res}.png?v=19";
 
-// Proxy requests from /kind/color/z/x/y(?@2x).png to baseUrl
+// Proxy requests from /kind/color/activity/z/x/y(?@2x).png to baseUrl
 async function handleTileProxyRequest(request) {
   const url = new URL(request.url);
-
-  const match1 = url.pathname.match(
-    new RegExp("(personal|global)/(\\w+)/(\\d+)/(\\d+)/(\\d+)/(\\d+)(@2x)?.png")
-  );
   
   const match = url.pathname.match(
-    new RegExp("(personal|global)/(\\w+)/(\\d+)/(\\d+)/(\\d+)(@2x)?.png")
+    new RegExp("(personal|global)/(\\w+)/(\\w+)/(\\d+)/(\\d+)/(\\d+)(@2x)?.png")
   );
   if (match === null) {
     return new Response("invalid url, expected: /kind/color/z/x/y.png", {
@@ -83,10 +80,11 @@ async function handleTileProxyRequest(request) {
     });
   }
 
-  const [_, kind, color, z, x, y, res] = match;
+  const [_, kind, color, activity, z, x, y, res] = match;
   const data = {
     strava_id: Env.STRAVA_ID,
     color,
+    activity,
     x,
     y,
     z,
