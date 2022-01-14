@@ -50,22 +50,23 @@ Global Heatmap
   activity choices : all, ride, winter, run, water
   
 Personal Heatmap
-  /personal/:color/{z}/{x}/{y}.png
-  /personal/:color/{z}/{x}/{y}@2x.png
+  /personal/:color/:activity/{z}/{x}/{y}.png
+  /personal/:color/:activity/{z}/{x}/{y}@2x.png
 
   color choices: orange, hot, blue, bluered, purple, gray
+  activity choices : all, ride, winter, run, water
 `);
 }
 
 const PERSONAL_MAP_URL =
   "https://personal-heatmaps-external.strava.com/" +
   "tiles/{strava_id}/{color}/{z}/{x}/{y}{res}.png" +
-  "?filter_type=ride&include_everyone=true" +
+  "?filter_type={activity}&include_everyone=true" +
   "&include_followers_only=true&respect_privacy_zones=true";
 
 const GLOBAL_MAP_URL =
   "https://heatmap-external-c.strava.com/" +
-  "tiles-auth/{color}/{activity}/{z}/{x}/{y}{res}.png?v=19";
+  "tiles-auth/{activity}/{color}/{z}/{x}/{y}{res}.png?v=19";
 
 // Proxy requests from /kind/color/activity/z/x/y(?@2x).png to baseUrl
 async function handleTileProxyRequest(request) {
@@ -75,7 +76,7 @@ async function handleTileProxyRequest(request) {
     new RegExp("(personal|global)/(\\w+)/(\\w+)/(\\d+)/(\\d+)/(\\d+)(@2x)?.png")
   );
   if (match === null) {
-    return new Response("invalid url, expected: /kind/color/z/x/y.png", {
+    return new Response("invalid url, expected: /kind/color/activity/z/x/y.png", {
       status: 400,
     });
   }
