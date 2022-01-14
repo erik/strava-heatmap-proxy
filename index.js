@@ -70,6 +70,10 @@ const GLOBAL_MAP_URL =
 async function handleTileProxyRequest(request) {
   const url = new URL(request.url);
 
+  const match1 = url.pathname.match(
+    new RegExp("(personal|global)/(\\w+)/(\\d+)/(\\d+)/(\\d+)/(\\d+)(@2x)?.png")
+  );
+  
   const match = url.pathname.match(
     new RegExp("(personal|global)/(\\w+)/(\\d+)/(\\d+)/(\\d+)(@2x)?.png")
   );
