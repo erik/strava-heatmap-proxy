@@ -66,7 +66,10 @@ const PERSONAL_MAP_URL =
 
 const GLOBAL_MAP_URL =
   "https://heatmap-external-c.strava.com/" +
-  "tiles-auth/{activity}/{color}/{z}/{x}/{y}{res}.png?v=19";
+      "tiles-auth/{activity}/{color}/{z}/{x}/{y}{res}.png?px=256";
+  // "tiles-auth/{activity}/{color}/{z}/{x}/{y}{res}.png?v=19";
+
+// FIXME : allow use of @2x res = 1024 with the workarround px=256 to use composite map in orux
 
 // Proxy requests from /kind/color/activity/z/x/y(?@2x).png to baseUrl
 async function handleTileProxyRequest(request) {
