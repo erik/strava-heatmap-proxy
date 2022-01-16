@@ -43,20 +43,20 @@ async function handleRequest(event) {
 function handleIndexRequest() {
   return new Response(`\
 Global Heatmap
-  for 512px tiles (default) : /global/:color/:activity/{z}/{x}/{y}.png
-  for 256px tiles : /global/:color/:activity/{z}/{x}/{y}&px=256.png
-  for 1024px tiles : /global/:color/:activity/{z}/{x}/{y}@2x.png
-  
-  color choices: mobileblue, orange, hot, blue, bluered, purple, gray
-  activity choices : all, ride, winter, run, water
-  
-Personal Heatmap
-  for 512px tiles (default) : /personal/:color/:activity/{z}/{x}/{y}.png
-  for 256px tiles : /personal/:color/:activity/{z}/{x}/{y}&px=256.png
-  for 1024px tiles : /personal/:color/:activity/{z}/{x}/{y}@2x.png
+       256px: /global/:color/:activity/{z}/{x}/{y}@small.png
+       512px: /global/:color/:activity/{z}/{x}/{y}.png
+      1024px: /global/:color/:activity/{z}/{x}/{y}@2x.png
 
-  color choices: orange, hot, blue, bluered, purple, gray
-  activity choices : all, ride, winter, run, water
+      colors: mobileblue, orange, hot, blue, bluered, purple, gray
+  activities: all, ride, winter, run, water
+
+
+Personal Heatmap
+       512px: /personal/:color/:activity/{z}/{x}/{y}.png
+      1024px: /personal/:color/:activity/{z}/{x}/{y}@2x.png
+
+      colors: orange, hot, blue, bluered, purple, gray
+  activities: all, ride, winter, run, water
 `);
 }
 
@@ -64,19 +64,18 @@ const PERSONAL_MAP_URL =
   "https://personal-heatmaps-external.strava.com/" +
   "tiles/{strava_id}/{color}/{z}/{x}/{y}{res}.png" +
   "?filter_type={activity}&include_everyone=true" +
-  "&include_followers_only=true&respect_privacy_zones=true{res256}";
+  "&include_followers_only=true&respect_privacy_zones=true";
 
 const GLOBAL_MAP_URL =
   "https://heatmap-external-c.strava.com/" +
-      "tiles-auth/{activity}/{color}/{z}/{x}/{y}{res}.png?v=19{res256}";
-  // "tiles-auth/{activity}/{color}/{z}/{x}/{y}{res}.png?v=19";
+  "tiles-auth/{activity}/{color}/{z}/{x}/{y}{res}.png?v=19{qs}";
 
 // Proxy requests from /kind/color/activity/z/x/y(?@2x).png to baseUrl
 async function handleTileProxyRequest(request) {
   const url = new URL(request.url);
-  
+
   const match = url.pathname.match(
-    new RegExp("(personal|global)/(\\w+)/(\\w+)/(\\d+)/(\\d+)/(\\d+)(@2x)?(&px=256)?.png")
+    new RegExp("(personal|global)/(\\w+)/(\\w+)/(\\d+)/(\\d+)/(\\d+)(@small|@2x)?.png")
   );
   if (match === null) {
     return new Response("invalid url, expected: /kind/color/activity/z/x/y.png", {
@@ -84,7 +83,7 @@ async function handleTileProxyRequest(request) {
     });
   }
 
-  const [_, kind, color, activity, z, x, y, res, res256] = match;
+  const [_, kind, color, activity, z, x, y, res] = match;
   const data = {
     strava_id: Env.STRAVA_ID,
     color,
@@ -92,8 +91,9 @@ async function handleTileProxyRequest(request) {
     x,
     y,
     z,
-    res: res || "",
-    res256: res256 || "",
+    // "@small" and "@2x" as part of the URL don't map 1:1 to Strava's API.
+    res: res === "@small" ? '' : (res || ''),
+    qs: res === "@small" ? '&px=256' : '',
   };
 
   const baseUrl = kind === "personal" ? PERSONAL_MAP_URL : GLOBAL_MAP_URL;
