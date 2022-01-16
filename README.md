@@ -84,7 +84,7 @@ $ echo "...." | wrangler secret put STRAVA_COOKIES
 Check that everything's working by running `wrangler dev`.
 
 Here's an example tile URL with some data:
-[/global/mobileblue/11/351/817@2x.png](http://127.0.0.1:8787/global/mobileblue/11/351/817@2x.png)
+[/global/mobileblue/all/11/351/817@2x.png](http://127.0.0.1:8787/global/mobileblue/all/11/351/817@2x.png)
 (Downtown Los Angeles)
 
 When you're all set, use `wrangler publish` to bring the site live on
