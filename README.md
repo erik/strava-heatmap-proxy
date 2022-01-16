@@ -41,7 +41,7 @@ In your forked repository, we need to set up some GitHub secrets
 These secrets will be used by two GitHub Actions:
 
 1. [deploy.yml](.github/workflows/deploy.yml): Deploy to Cloudflare on every
-   commit to `master`.
+   commit to `main`.
 2. [credentials.yml](.github/workflows/credentials.yml): Fetch fresh Strava
    cookies once per week.
 
