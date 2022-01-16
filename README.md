@@ -5,7 +5,7 @@ unauthenticated access to personal and global Strava heatmaps. If you want to
 use your personal Strava heatmap in Gaia or Locus, this will give you a URL
 that you can use for that.
 
-Note: you **will** need to be a Strava premium subscriber to use this. Personal
+Note: you **will** need to be a Strava premium subscriber to use personal heatmap, while global heatmap are available for free Strava account. Personal
 use only, please. Strava will ratelimit you.
 
 # Setup
@@ -20,7 +20,7 @@ template URLs to use:
 - Global: `https://strava-heatmap-proxy.YOUR_NAMESPACE.workers.dev/global/orange/all/{zoom}/{x}/{y}@2x.png`
 
 Check `https://strava-heatmap-proxy.YOUR_NAMESPACE.workers.dev/` for full list
-of supported tile colors.
+of supported tile colors, activities and tile size.
 
 ## The easy way
 
