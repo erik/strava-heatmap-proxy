@@ -10,11 +10,12 @@ zone_id = ""
 
 compatibility_date = "2021-11-19"
 
-# Controls how long Cloudflare should cache each tile before requesting again
-# from Strava.
+# TILE_CACHE_SECS: Controls how long Cloudflare should cache each tile before
+# requesting again from Strava. Use "0" to disable caching.
 #
-# Use "0" to disable caching.
-vars = { TILE_CACHE_SECS = "86400" }
+# ALLOWED_HOSTS: Sets CORS header and checks that requests have appropriate
+# origins. If unset all hosts are allowed
+vars = { TILE_CACHE_SECS = "86400", ALLOWED_HOSTS = "" }
 
 # [secrets]
 # STRAVA_ID

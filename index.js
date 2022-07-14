@@ -9,7 +9,8 @@ const Router = require("./router");
 const Env = {
   STRAVA_ID: globalThis.STRAVA_ID,
   STRAVA_COOKIES: globalThis.STRAVA_COOKIES,
-  TILE_CACHE_SECS: +TILE_CACHE_SECS || 0
+  TILE_CACHE_SECS: +TILE_CACHE_SECS || 0,
+  ALLOWED_HOSTS: (globalThis.ALLOWED_HOSTS || '').split(','),
 };
 
 addEventListener("fetch", (event) => {
@@ -29,7 +30,7 @@ async function handleRequest(event) {
 
       if (Env.TILE_CACHE_SECS > 0 && response.status === 200) {
         response = new Response(response.body, response);
-        response.headers.append("Cache-Control", `s-maxage=${Env.TILE_CACHE_SECS}`);
+        response.headers.append("Cache-Control", `maxage=${Env.TILE_CACHE_SECS}`);
         event.waitUntil(caches.default.put(event.request.url, response.clone()));
       }
     }
@@ -83,6 +84,10 @@ async function handleTileProxyRequest(request) {
     });
   }
 
+  if (Env.ALLOWED_HOSTS.length > 0 && !Env.ALLOWED_HOSTS.includes(url.host)) {
+    return new Response('Host not allowed', { status: 403 });
+  }
+
   const [_, kind, color, activity, z, x, y, res] = match;
   const data = {
     strava_id: Env.STRAVA_ID,
@@ -105,5 +110,11 @@ async function handleTileProxyRequest(request) {
     headers: new Headers({ Cookie: Env.STRAVA_COOKIES }),
   });
 
-  return await fetch(proxiedRequest);
+  const response = await fetch(proxiedRequest);
+  response.headers.append(
+    'Access-Control-Allow-Origin',
+    Env.ALLOWED_HOSTS.length > 0 ? url.host : '*'
+  );
+
+  return response;
 }
