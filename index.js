@@ -84,7 +84,8 @@ async function handleTileProxyRequest(request) {
     });
   }
 
-  if (Env.ALLOWED_HOSTS.length > 0 && !Env.ALLOWED_HOSTS.includes(url.host)) {
+  const origin = request.headers.get('origin');
+  if (Env.ALLOWED_HOSTS.length > 0 && !Env.ALLOWED_HOSTS.includes(origin)) {
     return new Response('Host not allowed', { status: 403 });
   }
 
@@ -110,10 +111,15 @@ async function handleTileProxyRequest(request) {
     headers: new Headers({ Cookie: Env.STRAVA_COOKIES }),
   });
 
-  const response = await fetch(proxiedRequest);
+  let response = await fetch(proxiedRequest);
+  response = new Response(
+    await response.arrayBuffer(),
+    response
+  );
+
   response.headers.append(
     'Access-Control-Allow-Origin',
-    Env.ALLOWED_HOSTS.length > 0 ? url.host : '*'
+    Env.ALLOWED_HOSTS.length > 0 ? origin : '*'
   );
 
   return response;
