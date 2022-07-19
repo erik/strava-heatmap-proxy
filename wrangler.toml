@@ -15,7 +15,7 @@ compatibility_date = "2021-11-19"
 #
 # ALLOWED_HOSTS: Sets CORS header and checks that requests have appropriate
 # origins. If unset all hosts are allowed
-vars = { TILE_CACHE_SECS = "86400", ALLOWED_HOSTS = "" }
+vars = { TILE_CACHE_SECS = "86400", ALLOWED_HOSTS = "http://localhost:8000" }
 
 # [secrets]
 # STRAVA_ID
