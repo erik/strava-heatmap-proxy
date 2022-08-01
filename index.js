@@ -10,7 +10,7 @@ const Env = {
   STRAVA_ID: globalThis.STRAVA_ID,
   STRAVA_COOKIES: globalThis.STRAVA_COOKIES,
   TILE_CACHE_SECS: +TILE_CACHE_SECS || 0,
-  ALLOWED_HOSTS: (globalThis.ALLOWED_HOSTS || '').split(','),
+  ALLOWED_HOSTS: (globalThis.ALLOWED_HOSTS || '*').split(','),
 };
 
 addEventListener("fetch", (event) => {
@@ -85,7 +85,7 @@ async function handleTileProxyRequest(request) {
   }
 
   const origin = request.headers.get('origin');
-  if (Env.ALLOWED_HOSTS.length > 0 && !Env.ALLOWED_HOSTS.includes(origin)) {
+  if (!Env.ALLOWED_HOSTS.includes('*') && !Env.ALLOWED_HOSTS.includes(origin)) {
     return new Response('Host not allowed', { status: 403 });
   }
 
@@ -117,10 +117,7 @@ async function handleTileProxyRequest(request) {
     response
   );
 
-  response.headers.append(
-    'Access-Control-Allow-Origin',
-    Env.ALLOWED_HOSTS.length > 0 ? origin : '*'
-  );
+  response.headers.append('Access-Control-Allow-Origin', origin);
 
   return response;
 }
