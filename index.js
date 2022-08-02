@@ -10,7 +10,7 @@ const Env = {
   STRAVA_ID: globalThis.STRAVA_ID,
   STRAVA_COOKIES: globalThis.STRAVA_COOKIES,
   TILE_CACHE_SECS: +TILE_CACHE_SECS || 0,
-  ALLOWED_HOSTS: (globalThis.ALLOWED_HOSTS || '*').split(','),
+  ALLOWED_ORIGINS: (globalThis.ALLOWED_ORIGINS || '*').split(','),
 };
 
 addEventListener("fetch", (event) => {
@@ -85,8 +85,10 @@ async function handleTileProxyRequest(request) {
   }
 
   const origin = request.headers.get('origin');
-  if (!Env.ALLOWED_HOSTS.includes('*') && !Env.ALLOWED_HOSTS.includes(origin)) {
-    return new Response('Host not allowed', { status: 403 });
+  if (!Env.ALLOWED_ORIGINS.includes('*')) {
+    if (origin !== null && !Env.ALLOWED_ORIGINS.includes(origin)) {
+      return new Response('Origin not allowed', { status: 403 });
+    }
   }
 
   const [_, kind, color, activity, z, x, y, res] = match;
