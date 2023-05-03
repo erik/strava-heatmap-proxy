@@ -1,12 +1,6 @@
 name = "strava-heatmap-proxy"
-type = "webpack"
-
-# Change this to your own account ID
-account_id = "32100188be477c016941c21575b20d4d"
-
+main = "index.js"
 workers_dev = true
-route = ""
-zone_id = ""
 
 compatibility_date = "2021-11-19"
 
