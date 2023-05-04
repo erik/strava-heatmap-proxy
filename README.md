@@ -36,6 +36,7 @@ In your forked repository, we need to set up some GitHub secrets
 
 - `STRAVA_EMAIL`
 - `STRAVA_PASSWORD`
+- `CF_ACCOUNT_ID`
 - `CF_API_TOKEN`
 
 These secrets will be used by two GitHub Actions:
