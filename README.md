@@ -25,19 +25,13 @@ of supported tile colors, activities, and sizes.
 
 ## The easy way
 
-Start by forking the repository and modifying `wrangler.toml` to reference your
-Cloudflare account. The Deploy to Cloudflare Workers button below will do this
-for you:
-
-[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/erik/strava-heatmap-proxy)
-
-In your forked repository, we need to set up some GitHub secrets
+Start by forking this repository and setting up some GitHub secrets
 (`github.com/you/strava-heatmap-proxy/settings/secrets/actions`).
 
 - `STRAVA_EMAIL`
 - `STRAVA_PASSWORD`
-- `CF_ACCOUNT_ID`
-- `CF_API_TOKEN`
+- [`CF_ACCOUNT_ID`](https://developers.cloudflare.com/fundamentals/get-started/basic-tasks/find-account-and-zone-ids/)
+- [`CF_API_TOKEN`](https://developers.cloudflare.com/fundamentals/api/get-started/create-token/)
 
 These secrets will be used by two GitHub Actions:
 
