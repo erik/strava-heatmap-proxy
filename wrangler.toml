@@ -1,8 +1,7 @@
 name = "strava-heatmap-proxy"
 main = "index.js"
-workers_dev = true
 
-compatibility_date = "2021-11-19"
+compatibility_date = "2024-04-05"
 
 # TILE_CACHE_SECS: Controls how long Cloudflare should cache each tile before
 # requesting again from Strava. Use "0" to disable caching.
