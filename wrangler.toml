@@ -13,4 +13,9 @@ vars = { TILE_CACHE_SECS = "86400", ALLOWED_ORIGINS = "" }
 
 # [secrets]
 # STRAVA_ID
-# STRAVA_COOKIES
+# STRAVA_SESSION (value of _strava4_session cookie)
+
+# Create with: wrangler kv namespace create STRAVA_HEATMAP_PROXY_COOKIES
+[[kv_namespaces]]
+binding = "STRAVA_HEATMAP_PROXY_COOKIES"
+id = "<NAMESPACE_ID>"

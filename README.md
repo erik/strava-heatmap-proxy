@@ -26,36 +26,41 @@ Requirements:
 
 - [wrangler](https://github.com/cloudflare/wrangler) to manage Worker
   deployments
-- [deno](https://deno.land) to run Strava authentication script
 
 ### Strava Credentials
 
 Strava's API doesn't support heatmap access directly, so we'll need to
-log in with an email and password and grab session cookies for authentication.
-
-In short:
+grab a session cookie from the browser for authentication.
 
 1. Open https://strava.com/maps in your browser
-2. Using devtools, look for a network request for a tile (it'll be something
-   like `https://content-a.strava.com/identified/globalheat/...`)
-3. Find the cookies sent to the server with that request. It'll look like this:
-   `_strava4_session=...;_strava_CloudFront-Expires=;CloudFront-Key-Pair-Id=...;CloudFront-Policy=...;CloudFront-Signature=...;_strava_idcf=...`
+2. Using devtools, find the `_strava4_session` cookie for `strava.com`
 
-There are some [browser
-extensions](https://wiki.openstreetmap.org/wiki/Strava#Global_Heatmap_in_High_Resolution)
-which can help automate this over time.
-
-Lastly, we also need to grab your account id. You can find this by clicking on
-"My Profile" on the Strava website and taking note of the URL:
+We also need your account id. You can find this by clicking on "My Profile"
+on the Strava website and taking note of the URL:
 `https://www.strava.com/athletes/{strava_id}`.
 
-Now that we have these values, let's store them as Worker secrets.
+### Secrets
 
-```console
-$ wrangler login
-$ echo "1234" | wrangler secret put STRAVA_ID
-$ echo "_strava4_session=..." | wrangler secret put STRAVA_COOKIES
+```bash
+wrangler login
+
+# The worker uses a KV namespace to cache CloudFront cookies and keep them up to
+# date.
+#
+# Make sure to update wrangler.toml with the ID you get back.
+wrangler kv namespace create STRAVA_HEATMAP_PROXY_COOKIES
+
+echo "1234" | wrangler secret put STRAVA_ID
+echo "abc123..." | wrangler secret put STRAVA_SESSION
 ```
+
+The worker will automatically exchange your session cookie for CloudFront
+credentials and refresh them as they expire.
+
+You'll need to update `STRAVA_SESSION` if your session cookie ever expires
+though.
+
+### Verify
 
 Check that everything's working by running `wrangler dev`.
 
@@ -66,9 +71,6 @@ Here's an example tile URL with some data:
 When you're all set, use `wrangler publish` to bring the site live on
 `strava-heatmap-proxy.YOUR-NAMESPACE.workers.dev`
 
-Heads up, your credentials will expire after a few weeks, considering creating
-a periodic task to refresh them every 7 days or so.
-
 ## (optional) GitHub Actions
 
 Start by forking this repository and setting up some GitHub secrets
@@ -76,6 +78,7 @@ Start by forking this repository and setting up some GitHub secrets
 
 - [`CF_ACCOUNT_ID`](https://developers.cloudflare.com/fundamentals/get-started/basic-tasks/find-account-and-zone-ids/)
 - [`CF_API_TOKEN`](https://developers.cloudflare.com/fundamentals/api/get-started/create-token/)
+- `KV_NAMESPACE_ID`: ID of the `STRAVA_HEATMAP_PROXY_COOKIES` KV store (see above)
 
 These secrets will be used by GitHub Actions:
 
