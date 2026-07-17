@@ -245,9 +245,19 @@ async function handleTileProxyRequest(request, event) {
 
   const stravaCookies = await getStravaCookies(event);
 
+  // The personal heatmap is per-athlete, so its host has to know who is asking.
+  // The CloudFront cookies are only an access grant and carry no identity,
+  // which is why personal-heatmaps-external answers 401 without this. Strava's
+  // own client sends _strava4_session alongside them. The global heatmap is the
+  // same for every athlete, so that host has no use for our identity.
+  const cookie =
+    kind === "personal"
+      ? `${stravaCookies}; _strava4_session=${Env.STRAVA_SESSION}`
+      : stravaCookies;
+
   const proxiedRequest = new Request(proxyUrl, {
     method: "GET",
-    headers: new Headers({ Cookie: stravaCookies }),
+    headers: new Headers({ Cookie: cookie }),
   });
 
   let response = await fetch(proxiedRequest);
