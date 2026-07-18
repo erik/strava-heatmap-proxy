@@ -163,7 +163,7 @@ const REFRESH_BUFFER_MS = 5 * 60 * 1000; // refresh 5 minutes before expiry
 let COOKIE_CACHE = null;
 
 // Get valid CloudFront cookies, refreshing if needed.
-async function getStravaCookies(event) {
+async function getCloudFrontCookies(event) {
   const now = Date.now();
 
   if (COOKIE_CACHE && COOKIE_CACHE.expiry > now + REFRESH_BUFFER_MS) {
@@ -243,11 +243,16 @@ async function handleTileProxyRequest(request, event) {
   // replace templated data in base URL
   const proxyUrl = baseUrl.replace(/\{(\w+)\}/g, (_, key) => data[key]);
 
-  const stravaCookies = await getStravaCookies(event);
+  let cookies = await getCloudFrontCookies(event);
+
+  // Personal heatmap needs the session cookie as well
+  if (kind === "personal") {
+    cookies += `; _strava4_session=${Env.STRAVA_SESSION}`;
+  }
 
   const proxiedRequest = new Request(proxyUrl, {
     method: "GET",
-    headers: new Headers({ Cookie: stravaCookies }),
+    headers: new Headers({ Cookie: cookies }),
   });
 
   let response = await fetch(proxiedRequest);
